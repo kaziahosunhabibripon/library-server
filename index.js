@@ -25,10 +25,10 @@ client.connect(err => {
 
     app.post('/addBook', (req, res) => {
         const newEvent = req.body;
-        console.log("add new book", newEvent);
+       
         bookCollection.insertOne(newEvent)
             .then(result => {
-                console.log('Received', result.insertedCount);
+               
                 res.send(result.insertedCount > 0);
         })
     })
@@ -39,9 +39,7 @@ client.connect(err => {
 });
 
 
-app.get('/', (req, res) => {
-    res.send('Database Connected');
-})
+
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
