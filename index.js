@@ -33,8 +33,6 @@ client.connect(err => {
         })  
     })
     
-   
-
     app.post('/addBook', (req, res) => {
         const newEvent = req.body;
        
@@ -49,8 +47,26 @@ client.connect(err => {
 
     
 });
+client.connect(err => {
+    const bookCollection = client.db("BookShopDb").collection("order");
+   
+    app.post('/order', (req, res)=>{
+        const newOrder = req.body;
+        bookCollection.insertOne(newOrder)
+        .then(result=>{
+            res.send(result.insertedCount > 0);
+        })
+    })
+    console.log("Connection error", err);
 
+    app.get('/order',(req, res)=>{
+        order.find({})
+        .toArray((err, documents)=>{
+            res.send(documents);
+        })
+    })
 
+});
 
 
 app.listen(port, () => {
