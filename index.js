@@ -48,11 +48,11 @@ client.connect(err => {
     
 });
 client.connect(err => {
-    const bookCollection = client.db("BookShopDb").collection("order");
+    const orderCollection = client.db("BookShopDb").collection("order");
    
     app.post('/order', (req, res)=>{
         const newOrder = req.body;
-        bookCollection.insertOne(newOrder)
+        orderCollection.insertOne(newOrder)
         .then(result=>{
             res.send(result.insertedCount > 0);
         })
@@ -60,7 +60,8 @@ client.connect(err => {
     console.log("Connection error", err);
 
     app.get('/order',(req, res)=>{
-        order.find({})
+       
+        orderCollection.find({email: req.query.email})
         .toArray((err, documents)=>{
             res.send(documents);
         })
