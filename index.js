@@ -23,7 +23,6 @@ admin.initializeApp({
     databaseURL:process.env.FIRE_DB
 });
 
-
 client.connect(err => {
     const bookCollection = client.db("BookShopDb").collection("books");
 
@@ -32,13 +31,6 @@ client.connect(err => {
             .toArray((err, items) => {
                 res.send(items);
 
-            })
-    })
-
-    app.get('/books/:id', (req, res) => {
-        bookCollection.find({ _id: ObjectId(req.params.id) })
-            .toArray((err, documents) => {
-                res.send(documents[0]);
             })
     })
 
@@ -53,21 +45,19 @@ client.connect(err => {
     })
     console.log("Connection error", err);
 
+    app.delete('/delete/:id', (req,res)=>{
+        bookCollection.deleteOne({ _id: ObjectId(req.params.id)})
+        .then( result=>{
+           console.log(result);
+        })
+
+    })
+
 
 
 });
 client.connect(err => {
     const orderCollection = client.db("BookShopDb").collection("order");
-
-    app.post('/order', (req, res) => {
-        const newOrder = req.body;
-        orderCollection.insertOne(newOrder)
-            .then(result => {
-                res.send(result.insertedCount > 0);
-            })
-    })
-    console.log("Connection error", err);
-
     app.get('/order', (req, res) => {
         const bearer = req.headers.authorization;
         if (bearer && bearer.startsWith('Bearer ')) {
@@ -91,6 +81,29 @@ client.connect(err => {
         }else{
             res.status(401).send('Unauthorized access');
         }
+    })
+    app.get('/books/:id', (req, res) => {
+        orderCollection.find({ _id: ObjectId(req.params.id) })
+            .toArray((err, documents) => {
+                res.send(documents[0]);
+            })
+    })
+
+    app.post('/order', (req, res) => {
+        const newOrder = req.body;
+        orderCollection.insertOne(newOrder)
+            .then(result => {
+                res.send(result.insertedCount > 0);
+            })
+    })
+    console.log("Connection error", err);
+
+    app.post('/books/:id', (req, res) => {
+        const id = req.body;
+        orderCollection.find({ _id: {$in:id} })
+            .toArray((err, documents) => {
+                res.send(documents);
+            })
     })
 
 });
