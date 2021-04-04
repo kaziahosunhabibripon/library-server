@@ -36,11 +36,10 @@ client.connect(err => {
 
     app.post('/addBook', (req, res) => {
         const newEvent = req.body;
-
         bookCollection.insertOne(newEvent)
             .then(result => {
-
                 res.send(result.insertedCount > 0);
+               
             })
     })
     console.log("Connection error", err);
@@ -48,7 +47,7 @@ client.connect(err => {
     app.delete('/delete/:id', (req,res)=>{
         bookCollection.deleteOne({ _id: ObjectId(req.params.id)})
         .then( result=>{
-           console.log(result);
+          res.send(result.deletedCount > 0);
         })
 
     })
