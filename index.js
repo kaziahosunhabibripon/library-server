@@ -20,12 +20,12 @@ var serviceAccount = require("./configs/libray-shop-firebase-adminsdk-me16w-84e0
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-   
+
 });
 
 client.connect(err => {
     const bookCollection = client.db("BookShopDb").collection("books");
-    const orderCollection = client.db("BookShopDb").collection("order");
+
     app.get('/books', (req, res) => {
         bookCollection.find({})
             .toArray((err, items) => {
@@ -34,57 +34,41 @@ client.connect(err => {
             })
     })
     app.get('/books/:_id', (req, res) => {
-        bookCollection.find({_id: ObjectId(req.params._id) })
-            .toArray( (err, items) => {
+        bookCollection.find({ _id: ObjectId(req.params._id) })
+            .toArray((err, items) => {
                 console.log(items);
             })
     })
-    
+
     app.post('/addBook', (req, res) => {
         const newEvent = req.body;
         bookCollection.insertOne(newEvent)
             .then(result => {
                 res.send(result.insertedCount > 0);
-               
+
             })
     })
 
-    app.delete('/delete/:id', (req,res)=>{
-        bookCollection.deleteOne({_id: ObjectId(req.params.id)})
-        .then( result=>{
-          res.send(result.deletedCount > 0);
-        })
+    app.delete('/delete/:id', (req, res) => {
+        bookCollection.deleteOne({ _id: ObjectId(req.params.id) })
+            .then(result => {
+                res.send(result.deletedCount > 0);
+            })
 
     })
 
     console.log("Connection error", err);
-    
-    app.get('/order', (req, res) => {
-        
-        const bearer = req.headers.authorization;
-        if (bearer && bearer.startsWith('Bearer ')) {
-            const idToken = bearer.split(' ')[1];
-           
-            admin.auth().verifyIdToken(idToken)
-                .then(function (decodedToken) {
-                    const tokenEmail = decodedToken.email;
-                    const queryEmail = req.query.email;     
-                    if (tokenEmail == queryEmail) {
-                        orderCollection.find({ email: queryEmail })
-                            .toArray((err, documents) => {
-                                res.status(200).send(documents);
-                        })
-                    }
-                 
-                })
-                .catch((error) => {
 
-            });
-        }else{
-            res.status(401).send('Unauthorized access');
-        }
+
+});
+client.connect(err => {
+    const orderCollection = client.db("BookShopDb").collection("order");
+    app.get('/orders', (req, res) => {
+        orders.find({})
+            .toArray((err, documents) => {
+                res.send(documents);
+            })
     })
-   
 
     app.post('/order', (req, res) => {
         const newOrder = req.body;
@@ -94,11 +78,8 @@ client.connect(err => {
             })
     })
     console.log("Connection error", err);
-
     
-
-});
-
+  });
 
 
 app.listen(port, () => {
