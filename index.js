@@ -25,12 +25,18 @@ admin.initializeApp({
 
 client.connect(err => {
     const bookCollection = client.db("BookShopDb").collection("books");
-
+    const orderCollection = client.db("BookShopDb").collection("order");
     app.get('/books', (req, res) => {
         bookCollection.find({})
             .toArray((err, items) => {
                 res.send(items);
 
+            })
+    })
+    app.get('/books/:_id', (req, res) => {
+        bookCollection.find({_id: ObjectId(req.params._id) })
+            .toArray( (err, items) => {
+                console.log(items);
             })
     })
     
@@ -52,11 +58,9 @@ client.connect(err => {
     })
 
     console.log("Connection error", err);
-
-});
-client.connect(err => {
-    const orderCollection = client.db("BookShopDb").collection("order");
+    
     app.get('/order', (req, res) => {
+        
         const bearer = req.headers.authorization;
         if (bearer && bearer.startsWith('Bearer ')) {
             const idToken = bearer.split(' ')[1];
@@ -80,12 +84,12 @@ client.connect(err => {
             res.status(401).send('Unauthorized access');
         }
     })
-    app.get('/books/:id', (req, res) => {
-        orderCollection.find({_id: ObjectId(req.params.id) })
-            .toArray((err, documents) => {
-                res.send(documents[0]);
-            })
-    })
+    // app.get('/books/:id', (req, res) => {
+    //     orderCollection.find({_id: ObjectId(req.params.id) })
+    //         .toArray( documents => {
+    //             res.send(documents);
+    //         })
+    // })
 
     app.post('/order', (req, res) => {
         const newOrder = req.body;
@@ -105,6 +109,7 @@ client.connect(err => {
     })
 
 });
+
 
 
 app.listen(port, () => {
