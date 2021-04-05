@@ -20,7 +20,7 @@ var serviceAccount = require("./configs/libray-shop-firebase-adminsdk-me16w-84e0
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL:process.env.FIRE_DB
+   
 });
 
 client.connect(err => {
@@ -33,7 +33,7 @@ client.connect(err => {
 
             })
     })
-
+    
     app.post('/addBook', (req, res) => {
         const newEvent = req.body;
         bookCollection.insertOne(newEvent)
@@ -42,17 +42,16 @@ client.connect(err => {
                
             })
     })
-    console.log("Connection error", err);
 
     app.delete('/delete/:id', (req,res)=>{
-        bookCollection.deleteOne({ _id: ObjectId(req.params.id)})
+        bookCollection.deleteOne({_id: ObjectId(req.params.id)})
         .then( result=>{
           res.send(result.deletedCount > 0);
         })
 
     })
 
-
+    console.log("Connection error", err);
 
 });
 client.connect(err => {
@@ -70,7 +69,7 @@ client.connect(err => {
                         orderCollection.find({ email: queryEmail })
                             .toArray((err, documents) => {
                                 res.status(200).send(documents);
-                            })
+                        })
                     }
                  
                 })
@@ -82,7 +81,7 @@ client.connect(err => {
         }
     })
     app.get('/books/:id', (req, res) => {
-        orderCollection.find({ _id: ObjectId(req.params.id) })
+        orderCollection.find({_id: ObjectId(req.params.id) })
             .toArray((err, documents) => {
                 res.send(documents[0]);
             })
