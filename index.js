@@ -84,12 +84,7 @@ client.connect(err => {
             res.status(401).send('Unauthorized access');
         }
     })
-    // app.get('/books/:id', (req, res) => {
-    //     orderCollection.find({_id: ObjectId(req.params.id) })
-    //         .toArray( documents => {
-    //             res.send(documents);
-    //         })
-    // })
+   
 
     app.post('/order', (req, res) => {
         const newOrder = req.body;
@@ -100,13 +95,7 @@ client.connect(err => {
     })
     console.log("Connection error", err);
 
-    app.post('/books/:id', (req, res) => {
-        const id = req.body;
-        orderCollection.find({ _id: {$in:id} })
-            .toArray((err, documents) => {
-                res.send(documents);
-            })
-    })
+    
 
 });
 
