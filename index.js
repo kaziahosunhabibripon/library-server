@@ -59,11 +59,14 @@ client.connect(err => {
 
     console.log("Bookshop database connected", err);
 
+});
+client.connect(err => {
+
     const orderCollection = client.db("BookShopDb").collection("order");
-    app.get('/orders', (req, res) => {
+    app.get('/order', (req, res) => {  
         orderCollection.find({email: req.query.email})
-            .toArray( (err, items) => {
-                res.send(items);
+            .toArray( (err, documents) => {
+                res.send(documents);
             })
     })
 
@@ -77,9 +80,7 @@ client.connect(err => {
     })
     console.log("order database Connected", err);
 
-
 });
-
 
 
 app.listen(port, () => {
