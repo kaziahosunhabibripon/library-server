@@ -33,9 +33,9 @@ client.connect(err => {
             })
     })
     app.get('/books/:_id', (req, res) => {
-        bookCollection.find({ _id: ObjectId(req.params._id) })
+        bookCollection.find({_id: ObjectId(req.params._id) })
             .toArray((err, items) => {
-                console.log(items);
+                res.send(items);
             })
     })
 
@@ -58,9 +58,6 @@ client.connect(err => {
 
     console.log("Bookshop database connected", err);
 
-
-});
-client.connect(err => {
     const orderCollection = client.db("BookShopDb").collection("order");
     app.get('/orders', (req, res) => {
         orderCollection.find({})
@@ -79,8 +76,10 @@ client.connect(err => {
            console.log(newOrder) ;
     })
     console.log("order database Connected", err);
-    
-  });
+
+
+});
+
 
 
 app.listen(port, () => {
