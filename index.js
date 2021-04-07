@@ -1,12 +1,13 @@
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
-const app = express();
+
 const cors = require('cors');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 const admin = require('firebase-admin');
 
+const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
@@ -19,7 +20,7 @@ var serviceAccount = require("./configs/libray-shop-firebase-adminsdk-me16w-84e0
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-
+    databaseURL: process.env.FIRE_DB
 });
 
 client.connect(err => {
@@ -33,7 +34,7 @@ client.connect(err => {
             })
     })
     app.get('/books/:_id', (req, res) => {
-        bookCollection.find({_id: ObjectId(req.params._id) })
+        bookCollection.find({ _id: ObjectId(req.params._id) })
             .toArray((err, items) => {
                 res.send(items);
             })
@@ -60,9 +61,9 @@ client.connect(err => {
 
     const orderCollection = client.db("BookShopDb").collection("order");
     app.get('/orders', (req, res) => {
-        orderCollection.find({})
-            .toArray((err, documents) => {
-                res.send(documents);
+        orderCollection.find({email: req.query.email})
+            .toArray( (err, items) => {
+                res.send(items);
             })
     })
 
@@ -73,7 +74,6 @@ client.connect(err => {
                 res.send(result.insertedCount > 0);
             })
 
-           console.log(newOrder) ;
     })
     console.log("order database Connected", err);
 
