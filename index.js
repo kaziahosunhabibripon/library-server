@@ -16,7 +16,9 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-var serviceAccount = require("./configs/libray-shop-firebase-adminsdk-me16w-84e0e2f55f.json");
+
+
+var serviceAccount = require("./configs/libray-shop-firebase-adminsdk-me16w-d4644c4b2d.json");
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -63,11 +65,29 @@ client.connect(err => {
 client.connect(err => {
 
     const orderCollection = client.db("BookShopDb").collection("order");
-    app.get('/order', (req, res) => {  
-        orderCollection.find({email: req.query.email})
-            .toArray( (err, documents) => {
-                res.send(documents);
-            })
+    app.get('/order', (req, res) => {
+        const bearer = req.headers.authorization;
+        if (bearer && bearer.startsWith('Bearer ')) {
+            const idToken = bearer.split(' ')[1];
+            admin.auth().verifyIdToken(idToken)
+                .then((decodedToken) => {
+                    const tokenEmail = decodedToken.email;
+                    const queryEmail = req.query.email;      
+                    if (tokenEmail == queryEmail) {
+                        orderCollection.find({ email: queryEmail })
+                            .toArray((err, documents) => {
+                                res.status(200).send(documents);
+                            })
+                    }
+                    
+                }).catch((error) => {
+                    res.status(401).send('Unauthorized Access');
+                });
+        }
+        else{
+            res.status(401).send('Unauthorized Access')
+
+        }
     })
 
     app.post('/order', (req, res) => {
