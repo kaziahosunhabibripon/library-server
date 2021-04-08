@@ -56,28 +56,11 @@ client.connect(err => {
 
     const orderCollection = client.db("BookShopDb").collection("order");
     app.get('/order', (req, res) => {
-        const bearer = req.headers.authorization;
-        if (bearer && bearer.startsWith('Bearer ')) {
-            const idToken = bearer.split(' ')[1];
-            admin.auth().verifyIdToken(idToken)
-                .then((decodedToken) => {
-                    const tokenEmail = decodedToken.email;
-                    const queryEmail = req.query.email;      
-                    if (tokenEmail == queryEmail) {
-                        orderCollection.find({ email: queryEmail })
-                            .toArray((err, documents) => {
-                                res.status(200).send(documents);
-                            })
-                    }
-                    
-                }).catch((error) => {
-                    res.status(401).send('Unauthorized Access');
-                });
-        }
-        else{
-            res.status(401).send('Unauthorized Access')
+        orderCollection.find({email: req.query.email})
+            .toArray((err, documents) => {
+                res.send(documents);
+            })
 
-        }
     })
 
     app.post('/order', (req, res) => {
