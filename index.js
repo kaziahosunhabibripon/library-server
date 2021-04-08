@@ -34,7 +34,7 @@ var serviceAccount = {
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: process.env.FIRE_DB
+    databaseURL:'https://libray-shop.firebaseio.com'
 });
 
 client.connect(err => {
