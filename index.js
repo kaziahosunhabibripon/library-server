@@ -18,7 +18,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 
 
-var serviceAccount = require("./configs/libray-shop-firebase-adminsdk-me16w-d4644c4b2d.json");
+var serviceAccount = require("./libray-shop-firebase-adminsdk-me16w-d4644c4b2d.json");
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
