@@ -102,7 +102,9 @@ client.connect(err => {
 
 });
 
-
+app.get('/', (req, res) => {
+    res.send('Its working');
+})
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
